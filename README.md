@@ -104,6 +104,27 @@ cp claude-agents/*.md ~/.claude/agents/
 cp claude-commands/team-review.md ~/.claude/commands/
 ```
 
+### Codex.app（桌面应用）中使用
+
+安装 skill 后，在 Codex.app 中直接说：
+
+```
+/pm 分析这个需求
+/architect 设计技术方案
+/backend 实现 API 接口
+/frontend 实现页面
+/qa 写测试用例
+/reviewer 审查代码
+/ceo 评估商业价值
+```
+
+**安装 Codex.app skills：**
+
+```bash
+cp -r codex-skills/* ~/.codex/skills/
+cp codex-AGENTS.md ~/.codex/AGENTS.md   # 或手动追加内容
+```
+
 ### Codex CLI 中使用
 
 ```bash
@@ -123,6 +144,15 @@ hermes-agent-team/
 ├── LICENSE
 ├── install.sh                  # 一键安装 Hermes
 ├── config-patch.yaml           # 角色定义（可直接合并到 config.yaml）
+├── codex-skills/               # Codex.app 自定义 skills
+│   ├── agent-pm/
+│   ├── agent-architect/
+│   ├── agent-backend/
+│   ├── agent-frontend/
+│   ├── agent-qa/
+│   ├── agent-reviewer/
+│   └── agent-ceo/
+├── codex-AGENTS.md             # Codex.app 全局配置示例
 ├── codex-agents.sh             # Codex CLI 角色函数
 ├── claude-agents/              # Claude Code 自定义 agents
 │   ├── ceo.md

@@ -116,7 +116,28 @@ else
     echo "⚠️  Claude Code 未安装，跳过 agent 安装"
 fi
 
-# Step 4: Codex tips
+# Step 4: Codex.app skills (if Codex is installed)
+if [ -d "$HOME/.codex/skills" ]; then
+    echo "📝 安装 Codex.app agent skills..."
+    SCRIPT_DIR="$(dirname "$0")"
+    if [ -d "$SCRIPT_DIR/codex-skills" ]; then
+        for skill in "$SCRIPT_DIR/codex-skills"/*/; do
+            skill_name=$(basename "$skill")
+            cp -r "$skill" "$HOME/.codex/skills/$skill_name" 2>/dev/null || true
+        done
+        echo "✅ Codex.app skills 安装完成"
+        echo ""
+        echo "Codex.app 中使用："
+        echo "  /pm [需求]      /architect [方案]"
+        echo "  /backend [任务]  /frontend [任务]"
+        echo "  /qa [模块]      /reviewer [代码]"
+        echo "  /ceo [方向]"
+    fi
+else
+    echo "⚠️  Codex.app 未安装，跳过 skill 安装"
+fi
+
+# Step 5: Codex CLI tips
 echo ""
 echo "---"
 echo "Codex CLI 用户："
