@@ -78,14 +78,62 @@ Agent 会按角色依次输出分析，最后给出综合结论。
 
 有明确需求需要编码实现时，skill 会调度 delegate_task 派发不同角色的子代理并行工作。
 
+### Claude Code 中使用
+
+安装后，在 Claude Code 中直接用 `@角色名` 调用：
+
+```
+@ceo 评估这个项目的商业价值
+@pm 分析这个需求的优先级
+@architect 评估这个技术方案的扩展性
+@backend 实现这个 API 接口
+@frontend 实现这个页面的响应式布局
+@qa 为这个模块设计测试策略
+@reviewer 审查最近的代码变更
+```
+
+多角色协作：
+```
+/team-review   # 自动调用所有角色，生成综合分析报告
+```
+
+**手动安装 Claude Code agents：**
+
+```bash
+cp claude-agents/*.md ~/.claude/agents/
+cp claude-commands/team-review.md ~/.claude/commands/
+```
+
+### Codex CLI 中使用
+
+```bash
+source codex-agents.sh        # 加载角色函数
+codex-pm "分析这个需求"         # 产品经理视角
+codex-architect "设计技术方案"   # 架构师视角
+codex-backend "实现 API"       # 后端开发
+codex-frontend "实现页面"       # 前端开发
+codex-team-review "做一个 AI SaaS"  # 全流程分析
+```
+
 ## 项目结构
 
 ```
 hermes-agent-team/
 ├── README.md
 ├── LICENSE
-├── install.sh                  # 一键安装
+├── install.sh                  # 一键安装 Hermes
 ├── config-patch.yaml           # 角色定义（可直接合并到 config.yaml）
+├── codex-agents.sh             # Codex CLI 角色函数
+├── claude-agents/              # Claude Code 自定义 agents
+│   ├── ceo.md
+│   ├── pm.md
+│   ├── architect.md
+│   ├── backend.md
+│   ├── frontend.md
+│   ├── qa.md
+│   └── reviewer.md
+├── claude-commands/            # Claude Code 自定义命令
+│   └── team-review.md
 ├── personalities/              # 角色文档
 │   ├── ceo.md
 │   ├── pm.md

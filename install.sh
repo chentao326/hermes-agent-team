@@ -91,3 +91,35 @@ echo "  /personality frontend   前端开发"
 echo "  /personality qa         测试"
 echo "  /personality reviewer   代码审查"
 echo ""
+echo "---"
+echo ""
+
+# Step 3: Install Claude Code agents (if Claude Code is installed)
+if command -v claude &>/dev/null; then
+    CLAUDE_AGENTS="$HOME/.claude/agents"
+    CLAUDE_COMMANDS="$HOME/.claude/commands"
+    mkdir -p "$CLAUDE_AGENTS" "$CLAUDE_COMMANDS"
+
+    if [ -d "$(dirname "$0")/claude-agents" ]; then
+        echo "📝 安装 Claude Code agents..."
+        cp "$(dirname "$0")/claude-agents/"*.md "$CLAUDE_AGENTS/"
+        cp "$(dirname "$0")/claude-commands/"*.md "$CLAUDE_COMMANDS/" 2>/dev/null || true
+        echo "✅ Claude Code agents 安装完成"
+        echo ""
+        echo "Claude Code 中使用："
+        echo "  @pm [需求]      @architect [方案]"
+        echo "  @backend [任务]  @frontend [任务]"
+        echo "  @qa [模块]      @reviewer [代码]"
+        echo "  @ceo [方向]     /team-review"
+    fi
+else
+    echo "⚠️  Claude Code 未安装，跳过 agent 安装"
+fi
+
+# Step 4: Codex tips
+echo ""
+echo "---"
+echo "Codex CLI 用户："
+echo "  source $(dirname "$0")/codex-agents.sh"
+echo "  codex-pm '...'  codex-architect '...'  codex-team-review '...'"
+echo ""
