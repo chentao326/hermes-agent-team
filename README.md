@@ -20,18 +20,27 @@ CEO → PM → 架构师 → 后端 ←→ 前端 → 测试 → 审查
 
 ## 安装
 
-### 方式一：一键安装
+### 方式一：交互式安装（推荐）
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/chentao326/hermes-agent-team/main/install.sh | bash
 ```
 
-脚本会自动：
-1. 将 7 个角色定义写入 `~/.hermes/config.yaml`
-2. 将 `agent-team-workflow` skill 复制到 `~/.hermes/skills/`
-3. 提示重启 gateway
+脚本会检测你安装了哪些平台，让你选择安装目标。
 
-### 方式二：手动安装
+### 方式二：命令行指定
+
+```bash
+# 一键全装
+curl -fsSL ... | bash -s -- --all
+
+# 只装指定平台
+curl -fsSL ... | bash -s -- --hermes    # Hermes Agent
+curl -fsSL ... | bash -s -- --claude    # Claude Code
+curl -fsSL ... | bash -s -- --codex     # Codex.app + CLI
+```
+
+### 方式三：手动安装
 
 **1. 添加角色定义**
 
