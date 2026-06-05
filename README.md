@@ -1,9 +1,9 @@
 # Hermes Agent Team
 
-为 [Hermes Agent](https://github.com/NousResearch/hermes-agent) 打造的 7 人虚拟技术团队 —— 一套预定义的角色人格（persona）和自动化协作工作流。
+为 [Hermes Agent](https://github.com/NousResearch/hermes-agent) 打造的 9 人虚拟技术团队 —— 一套预定义的角色人格（persona）和自动化协作工作流。
 
 ```
-CEO → PM → 架构师 → 后端 ←→ 前端 → 测试 → 审查
+CEO → PM → 项目经理 → 架构师 → 后端 ←→ 前端 → UX设计师 → 测试 → 审查
 ```
 
 ## 角色列表
@@ -12,9 +12,11 @@ CEO → PM → 架构师 → 后端 ←→ 前端 → 测试 → 审查
 |------|------|------|
 | CEO | `/personality ceo` | 商业战略、资源分配、ROI |
 | 产品经理 | `/personality pm` | 需求分析、PRD、优先级 |
+| 项目经理 | `/personality pjm` | 进度管理、风险、敏捷 |
 | 架构师 | `/personality architect` | 系统设计、技术选型 |
 | 后端开发 | `/personality backend` | API、数据库、性能 |
 | 前端开发 | `/personality frontend` | UI/UX、组件、工程化 |
+| UX设计师 | `/personality ux-designer` | 用户研究、交互设计 |
 | 测试 | `/personality qa` | 测试策略、自动化 |
 | 代码审查 | `/personality reviewer` | 审查、安全、最佳实践 |
 
@@ -65,10 +67,12 @@ hermes gateway restart
 在 Hermes 聊天中（CLI / 飞书 / Telegram 等）：
 
 ```
-/personality ceo        # 切换到 CEO 视角
-/personality pm         # 切换到产品经理
-/personality architect  # 切换到架构师
-/personality none       # 恢复默认
+/personality ceo          # 切换到 CEO 视角
+/personality pm           # 切换到产品经理
+/personality pjm          # 切换到项目经理
+/personality architect    # 切换到架构师
+/personality ux-designer  # 切换到 UX 设计师
+/personality none         # 恢复默认
 ```
 
 ### 多角色协作分析
@@ -94,9 +98,11 @@ Agent 会按角色依次输出分析，最后给出综合结论。
 ```
 @ceo 评估这个项目的商业价值
 @pm 分析这个需求的优先级
+@pjm 制定项目排期和风险管理
 @architect 评估这个技术方案的扩展性
 @backend 实现这个 API 接口
 @frontend 实现这个页面的响应式布局
+@ux-designer 评审这个交互流程
 @qa 为这个模块设计测试策略
 @reviewer 审查最近的代码变更
 ```
@@ -118,13 +124,15 @@ cp claude-commands/team-review.md ~/.claude/commands/
 安装 skill 后，在 Codex.app 中直接说：
 
 ```
+/ceo 评估商业价值
 /pm 分析这个需求
+/pjm 制定项目计划
 /architect 设计技术方案
 /backend 实现 API 接口
 /frontend 实现页面
+/ux 评审交互设计
 /qa 写测试用例
 /reviewer 审查代码
-/ceo 评估商业价值
 ```
 
 **安装 Codex.app skills：**
@@ -137,12 +145,14 @@ cp codex-AGENTS.md ~/.codex/AGENTS.md   # 或手动追加内容
 ### Codex CLI 中使用
 
 ```bash
-source codex-agents.sh        # 加载角色函数
-codex-pm "分析这个需求"         # 产品经理视角
-codex-architect "设计技术方案"   # 架构师视角
-codex-backend "实现 API"       # 后端开发
-codex-frontend "实现页面"       # 前端开发
-codex-team-review "做一个 AI SaaS"  # 全流程分析
+source codex-agents.sh           # 加载角色函数
+codex-pm "分析这个需求"            # 产品经理视角
+codex-pjm "制定迭代计划"           # 项目经理视角
+codex-architect "设计技术方案"      # 架构师视角
+codex-backend "实现 API"          # 后端开发
+codex-frontend "实现页面"          # 前端开发
+codex-ux-designer "评审交互"       # UX设计师视角
+codex-team-review "做一个 AI SaaS" # 全流程分析
 ```
 
 ## 项目结构
@@ -154,21 +164,25 @@ hermes-agent-team/
 ├── install.sh                  # 一键安装 Hermes
 ├── config-patch.yaml           # 角色定义（可直接合并到 config.yaml）
 ├── codex-skills/               # Codex.app 自定义 skills
+│   ├── agent-ceo/
 │   ├── agent-pm/
+│   ├── agent-pjm/
 │   ├── agent-architect/
 │   ├── agent-backend/
 │   ├── agent-frontend/
+│   ├── agent-ux-designer/
 │   ├── agent-qa/
-│   ├── agent-reviewer/
-│   └── agent-ceo/
+│   └── agent-reviewer/
 ├── codex-AGENTS.md             # Codex.app 全局配置示例
 ├── codex-agents.sh             # Codex CLI 角色函数
 ├── claude-agents/              # Claude Code 自定义 agents
 │   ├── ceo.md
 │   ├── pm.md
+│   ├── pjm.md
 │   ├── architect.md
 │   ├── backend.md
 │   ├── frontend.md
+│   ├── ux-designer.md
 │   ├── qa.md
 │   └── reviewer.md
 ├── claude-commands/            # Claude Code 自定义命令
@@ -176,9 +190,11 @@ hermes-agent-team/
 ├── personalities/              # 角色文档
 │   ├── ceo.md
 │   ├── pm.md
+│   ├── pjm.md
 │   ├── architect.md
 │   ├── backend.md
 │   ├── frontend.md
+│   ├── ux-designer.md
 │   ├── qa.md
 │   └── reviewer.md
 └── skills/

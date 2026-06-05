@@ -1,11 +1,23 @@
 #!/bin/bash
-# Codex Agent Team — 7个角色封装
+# Codex Agent Team — 9个角色封装
 # 用法: source codex-agents.sh && codex-pm "分析这个需求"
+
+codex-ceo() {
+  codex exec "你是一位技术出身的 CEO。$*
+  从商业角度分析：市场时机、变现路径、ROI、风险、竞争壁垒。
+  不要陷入技术细节。用中文输出。" "$@"
+}
 
 codex-pm() {
   codex exec "你是一位资深产品经理。$*
   从以下角度分析：用户痛点、目标用户、核心功能优先级（MoSCoW）、验收标准。
   不要写代码，只做分析。用中文输出。" "$@"
+}
+
+codex-pjm() {
+  codex exec "你是一位资深项目经理。$*
+  从以下角度分析：进度规划、风险识别、资源协调、里程碑设计、沟通计划。
+  不要写代码，只做项目管理分析。用中文输出。" "$@"
 }
 
 codex-architect() {
@@ -26,6 +38,12 @@ codex-frontend() {
   偏好 React/Next.js + TypeScript + Tailwind。用中文输出。" "$@"
 }
 
+codex-ux-designer() {
+  codex exec "你是一位资深 UX 设计师。$*
+  从以下角度分析：用户研究、信息架构、交互设计、可用性评估、无障碍设计。
+  不要写代码，只做设计分析和方案。用中文输出。" "$@"
+}
+
 codex-qa() {
   codex exec "你是一位资深测试工程师。$*
   设计测试策略：边界条件、异常路径、自动化方案、Bug 风险评估。
@@ -38,12 +56,6 @@ codex-reviewer() {
   每个问题给出具体改进建议。用中文输出。" "$@"
 }
 
-codex-ceo() {
-  codex exec "你是一位技术出身的 CEO。$*
-  从商业角度分析：市场时机、变现路径、ROI、风险、竞争壁垒。
-  不要陷入技术细节。用中文输出。" "$@"
-}
-
 # 团队协作：所有角色依次分析
 codex-team-review() {
   local topic="$1"
@@ -52,6 +64,9 @@ codex-team-review() {
   echo ""
   echo "=== PM 视角 ==="
   codex-pm "$topic"
+  echo ""
+  echo "=== 项目经理 视角 ==="
+  codex-pjm "$topic"
   echo ""
   echo "=== 架构师 视角 ==="
   codex-architect "$topic"
@@ -62,6 +77,9 @@ codex-team-review() {
   echo "=== 前端 视角 ==="
   codex-frontend "$topic"
   echo ""
+  echo "=== UX设计师 视角 ==="
+  codex-ux-designer "$topic"
+  echo ""
   echo "=== QA 视角 ==="
   codex-qa "$topic"
   echo ""
@@ -70,6 +88,7 @@ codex-team-review() {
 }
 
 echo "Codex Agent Team loaded. Commands:"
-echo "  codex-pm '...'       codex-architect '...'   codex-backend '...'"
-echo "  codex-frontend '...'  codex-qa '...'          codex-reviewer '...'"
-echo "  codex-ceo '...'       codex-team-review '...'"
+echo "  codex-ceo '...'       codex-pm '...'         codex-pjm '...'"
+echo "  codex-architect '...'  codex-backend '...'    codex-frontend '...'"
+echo "  codex-ux-designer '...' codex-qa '...'        codex-reviewer '...'"
+echo "  codex-team-review '...'"
