@@ -19,7 +19,7 @@ jobs:
         curl -LsSf https://astral.sh/uv/install.sh | sh
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
     - name: Install dependencies
-      run: uv sync --group dev
+      run: uv sync --extra dev
     - name: Lint with ruff
       run: uv run ruff check src/ tests/
     - name: Test with pytest
