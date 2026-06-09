@@ -1,205 +1,218 @@
-# Hermes Agent Team
+# Agent Team
 
-为 [Hermes Agent](https://github.com/NousResearch/hermes-agent) 打造的 9 人虚拟技术团队 —— 一套预定义的角色人格（persona）和自动化协作工作流。
+9 人虚拟技术团队 —— 多角色协作 CLI Agent，支持 **Anthropic / OpenAI / DeepSeek / OpenRouter** 等任意 LLM Provider。
 
 ```
 CEO → PM → 项目经理 → 架构师 → 后端 ←→ 前端 → UX设计师 → 测试 → 审查
 ```
 
-## 角色列表
-
-| 角色 | 命令 | 定位 |
-|------|------|------|
-| CEO | `/personality ceo` | 商业战略、资源分配、ROI |
-| 产品经理 | `/personality pm` | 需求分析、PRD、优先级 |
-| 项目经理 | `/personality pjm` | 进度管理、风险、敏捷 |
-| 架构师 | `/personality architect` | 系统设计、技术选型 |
-| 后端开发 | `/personality backend` | API、数据库、性能 |
-| 前端开发 | `/personality frontend` | UI/UX、组件、工程化 |
-| UX设计师 | `/personality ux-designer` | 用户研究、交互设计 |
-| 测试 | `/personality qa` | 测试策略、自动化 |
-| 代码审查 | `/personality reviewer` | 审查、安全、最佳实践 |
-
-## 安装
-
-### 方式一：交互式安装（推荐）
+## 快速开始
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/chentao326/hermes-agent-team/main/install.sh | bash
+# 安装
+git clone https://github.com/chentao326/hermes-agent-team.git
+cd hermes-agent-team
+uv sync
+
+# 设置 API Key
+export ANTHROPIC_API_KEY=sk-ant-...
+
+# 全流程分析（9 角色串行）
+uv run agent-team run "做一个 AI 客服 SaaS"
+
+# 单角色提问
+uv run agent-team ask architect "这个方案在100倍流量下会怎样？"
 ```
 
-脚本会检测你安装了哪些平台，让你选择安装目标。
+## CLI 命令
 
-### 方式二：命令行指定
+| 命令 | 说明 |
+|------|------|
+| `run <需求>` | 全流程分析（默认分析模式，9 角色串行） |
+| `run --mode execute <需求>` | 执行模式（流水线编排+前后端并行开发） |
+| `run --roles ceo,pm <需求>` | 只调用指定角色 |
+| `ask <角色> <问题>` | 快速单角色提问 |
+| `roles` | 列出所有角色和权限 |
+| `providers` | 列出所有支持的 LLM Provider |
+| `config show` | 显示当前配置 |
+| `config init` | 创建默认配置文件 |
+
+全局选项：`--api-key`、`--model`、`--provider`、`--base-url`、`--output`、`--output-file`
+
+## 多 Provider 支持
+
+| Provider | 自动推断 | 默认 Base URL |
+|----------|----------|---------------|
+| Anthropic Claude | `claude-*` | https://api.anthropic.com |
+| OpenAI GPT | `gpt-*`, `o1-*`, `o3-*` | https://api.openai.com/v1 |
+| DeepSeek | `deepseek-*` | https://api.deepseek.com/v1 |
+| 智谱 GLM | `glm-*` | https://open.bigmodel.cn/api/paas/v4 |
+| 月之暗面 Moonshot | — | https://api.moonshot.cn/v1 |
+| OpenRouter | — | https://openrouter.ai/api/v1 |
+| SiliconFlow | — | https://api.siliconflow.cn/v1 |
+| 其他 OpenAI 兼容 | 需指定 --base-url | 自定义 |
+
+### 使用示例
 
 ```bash
-# 一键全装
-curl -fsSL ... | bash -s -- --all
+# Anthropic（默认，自动推断）
+agent-team run "需求"
 
-# 只装指定平台
-curl -fsSL ... | bash -s -- --hermes    # Hermes Agent
-curl -fsSL ... | bash -s -- --claude    # Claude Code
-curl -fsSL ... | bash -s -- --codex     # Codex.app + CLI
+# OpenAI
+agent-team run --model gpt-4o --provider openai "需求"
+
+# DeepSeek（自动推断）
+agent-team run --model deepseek-chat "需求"
+
+# OpenRouter（指定 provider + base-url）
+agent-team run --provider openai --base-url https://openrouter.ai/api/v1 --model anthropic/claude-3.5-sonnet "需求"
+
+# 本地 vLLM / Ollama
+agent-team run --provider openai --base-url http://localhost:8000/v1 --model qwen2-7b "需求"
 ```
 
-### 方式三：手动安装
+API Key 优先级：CLI `--api-key` > 配置文件 > `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` 环境变量
 
-**1. 添加角色定义**
+## 安装方式
 
-打开 `~/.hermes/config.yaml`，在 `agent.personalities` 下添加 [config-patch.yaml](./config-patch.yaml) 中的内容。
-
-**2. 安装 Skill**
+### 方式一：本地运行
 
 ```bash
-cp -r skills/agent-team-workflow ~/.hermes/skills/software-development/
+git clone https://github.com/chentao326/hermes-agent-team.git
+cd hermes-agent-team
+uv sync
+uv run agent-team --help
 ```
 
-**3. 重启**
+### 方式二：PyPI 安装（发布后）
 
 ```bash
-hermes gateway restart
+pip install agent-team
+# 或
+uv tool install agent-team
 ```
 
-## 使用
+## 工作流模式
 
-### 切换角色
+### 分析模式（默认）
 
-在 Hermes 聊天中（CLI / 飞书 / Telegram 等）：
+9 个角色串行输出分析，每个角色独立视角：
+1. CEO — 商业战略、ROI、市场时机
+2. PM — 用户需求、PRD、优先级
+3. PJM — 进度管理、风险评估
+4. Architect — 系统设计、技术选型
+5. Backend — API 设计、数据库、实现
+6. Frontend — UI 实现、组件设计、性能
+7. UX Designer — 交互设计、可用性
+8. QA — 测试策略、质量保障
+9. Reviewer — 代码审查、安全、最佳实践
 
-```
-/personality ceo          # 切换到 CEO 视角
-/personality pm           # 切换到产品经理
-/personality pjm          # 切换到项目经理
-/personality architect    # 切换到架构师
-/personality ux-designer  # 切换到 UX 设计师
-/personality none         # 恢复默认
-```
-
-### 多角色协作分析
-
-触发 `agent-team-workflow` skill 后，直接描述需求即可：
-
-```
-"全流程评审：做一个 AI 客服 SaaS"
-"让 CEO 和 PM 看下这个想法"
-"后端和前端一起评估这个技术方案"
-```
-
-Agent 会按角色依次输出分析，最后给出综合结论。
+最后由综合结论汇总（核心决策/优先级/风险/下一步）。
 
 ### 执行模式
 
-有明确需求需要编码实现时，skill 会调度 delegate_task 派发不同角色的子代理并行工作。
-
-### Claude Code 中使用
-
-安装后，在 Claude Code 中直接用 `@角色名` 调用：
+带依赖关系的流水线编排：
 
 ```
-@ceo 评估这个项目的商业价值
-@pm 分析这个需求的优先级
-@pjm 制定项目排期和风险管理
-@architect 评估这个技术方案的扩展性
-@backend 实现这个 API 接口
-@frontend 实现这个页面的响应式布局
-@ux-designer 评审这个交互流程
-@qa 为这个模块设计测试策略
-@reviewer 审查最近的代码变更
+PM 确认需求 → PJM 制定排期 → Architect 技术方案 → UX 交互方案
+    ↓
+[Backend 并行开发  ←→  Frontend 并行开发]
+    ↓
+QA 测试 → Reviewer 审查 → CEO 验收
 ```
 
-多角色协作：
-```
-/team-review   # 自动调用所有角色，生成综合分析报告
-```
+后端和前端并行开发，支持工具调用（Bash/Read/Write）。
 
-**手动安装 Claude Code agents：**
+## 角色列表
+
+| 角色 ID | 名称 | 权限 | 能力 |
+|---------|------|------|------|
+| ceo | CEO | 只读 | 战略决策、商业模式、风险 |
+| pm | 产品经理 | 只读+Bash | 需求分析、PRD、竞品 |
+| pjm | 项目经理 | 只读+Bash | 进度、风险、敏捷 |
+| architect | 架构师 | 只读+Bash | 架构设计、技术选型 |
+| backend | 后端工程师 | 完整读写 | API、数据库、性能优化 |
+| frontend | 前端工程师 | 完整读写 | UI、组件、工程化 |
+| ux-designer | UX设计师 | 只读+Bash | 用户研究、交互设计 |
+| qa | 测试工程师 | 只读+Bash | 测试策略、自动化 |
+| reviewer | 代码审查 | 只读+Bash | 代码质量、安全 |
+
+## 多平台集成
+
+同一个角色定义集，适配 4 个平台：
+
+### Claude Code
 
 ```bash
+# 安装
 cp claude-agents/*.md ~/.claude/agents/
 cp claude-commands/team-review.md ~/.claude/commands/
+
+# 使用
+@ceo 分析商业价值
+/pm 写 PRD
+/team-review  # 全流程评审
 ```
 
-### Codex.app（桌面应用）中使用
-
-安装 skill 后，在 Codex.app 中直接说：
-
-```
-/ceo 评估商业价值
-/pm 分析这个需求
-/pjm 制定项目计划
-/architect 设计技术方案
-/backend 实现 API 接口
-/frontend 实现页面
-/ux 评审交互设计
-/qa 写测试用例
-/reviewer 审查代码
-```
-
-**安装 Codex.app skills：**
+### Codex.app
 
 ```bash
 cp -r codex-skills/* ~/.codex/skills/
-cp codex-AGENTS.md ~/.codex/AGENTS.md   # 或手动追加内容
+# 使用 /角色名 调用
 ```
 
-### Codex CLI 中使用
+### Codex CLI
 
 ```bash
-source codex-agents.sh           # 加载角色函数
-codex-pm "分析这个需求"            # 产品经理视角
-codex-pjm "制定迭代计划"           # 项目经理视角
-codex-architect "设计技术方案"      # 架构师视角
-codex-backend "实现 API"          # 后端开发
-codex-frontend "实现页面"          # 前端开发
-codex-ux-designer "评审交互"       # UX设计师视角
-codex-team-review "做一个 AI SaaS" # 全流程分析
+source codex-agents.sh
+codex-pm "分析需求"
+codex-team-review "做一个 SaaS"
+```
+
+### Hermes Agent
+
+```bash
+# 合并 config-patch.yaml 到 ~/.hermes/config.yaml
+# 安装 skill: cp -r skills/* ~/.hermes/skills/
 ```
 
 ## 项目结构
 
 ```
-hermes-agent-team/
-├── README.md
-├── LICENSE
-├── install.sh                  # 一键安装 Hermes
-├── config-patch.yaml           # 角色定义（可直接合并到 config.yaml）
-├── codex-skills/               # Codex.app 自定义 skills
-│   ├── agent-ceo/
-│   ├── agent-pm/
-│   ├── agent-pjm/
-│   ├── agent-architect/
-│   ├── agent-backend/
-│   ├── agent-frontend/
-│   ├── agent-ux-designer/
-│   ├── agent-qa/
-│   └── agent-reviewer/
-├── codex-AGENTS.md             # Codex.app 全局配置示例
-├── codex-agents.sh             # Codex CLI 角色函数
-├── claude-agents/              # Claude Code 自定义 agents
-│   ├── ceo.md
-│   ├── pm.md
-│   ├── pjm.md
-│   ├── architect.md
-│   ├── backend.md
-│   ├── frontend.md
-│   ├── ux-designer.md
-│   ├── qa.md
-│   └── reviewer.md
-├── claude-commands/            # Claude Code 自定义命令
-│   └── team-review.md
-├── personalities/              # 角色文档
-│   ├── ceo.md
-│   ├── pm.md
-│   ├── pjm.md
-│   ├── architect.md
-│   ├── backend.md
-│   ├── frontend.md
-│   ├── ux-designer.md
-│   ├── qa.md
-│   └── reviewer.md
-└── skills/
-    └── agent-team-workflow/   # 多角色协作 skill
-        └── SKILL.md
+agent-team/
+├── pyproject.toml
+├── src/agent_team/
+│   ├── __init__.py, __main__.py
+│   ├── cli/app.py          # Typer CLI 入口
+│   ├── config/settings.py  # 分层配置（pydantic-settings）
+│   ├── exceptions.py       # 异常层级
+│   ├── roles/
+│   │   ├── models.py       # Role + PermissionLevel
+│   │   ├── registry.py     # 角色注册表
+│   │   └── definitions/    # 9 个角色 Markdown
+│   ├── engine/
+│   │   ├── base.py                   # BaseLLMClient 抽象
+│   │   ├── anthropic_client.py       # Anthropic SDK
+│   │   ├── openai_compat_client.py   # OpenAI 兼容 API
+│   │   ├── client_factory.py         # 工厂 + 自动推断
+│   │   ├── prompt_builder.py         # System prompt 组装
+│   │   └── tool_executor.py          # Bash/Read/Write
+│   ├── workflows/
+│   │   ├── base.py         # WorkflowContext/Result
+│   │   ├── analysis.py     # 分析模式（串行）
+│   │   └── execute.py      # 执行模式（并行）
+│   └── output/
+│       ├── console.py      # Rich 流式输出
+│       ├── json_output.py  # JSON 输出
+│       └── markdown_output.py
+├── tests/                 # 50 个测试
+├── personalities/         # 角色定义（多平台共享）
+├── claude-agents/         # Claude Code 配置
+├── claude-commands/       # /team-review 命令
+├── codex-skills/          # Codex.app 配置
+├── codex-agents.sh        # Codex CLI 封装
+├── skills/                # Hermes Agent 工作流
+└── install.sh             # 传统安装脚本
 ```
 
 ## License
