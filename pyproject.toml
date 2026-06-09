@@ -8,6 +8,20 @@ version = "0.1.0"
 description = "9人虚拟技术团队 CLI Agent - CEO/PM/架构师/前后端/QA/审查专家协作"
 readme = "README.md"
 license = "MIT"
+authors = [{ name = "chentao326" }]
+keywords = ["agent", "team", "claude", "llm", "cli", "workflow"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+
+
 requires-python = ">=3.11"
 dependencies = [
     "anthropic>=0.42.0",
@@ -18,6 +32,12 @@ dependencies = [
     "pydantic-settings>=2.0",
     "pyyaml>=6.0",
 ]
+
+
+[project.urls]
+Homepage = "https://github.com/chentao326/hermes-agent-team"
+Repository = "https://github.com/chentao326/hermes-agent-team.git"
+Issues = "https://github.com/chentao326/hermes-agent-team/issues"
 
 [project.optional-dependencies]
 dev = [
