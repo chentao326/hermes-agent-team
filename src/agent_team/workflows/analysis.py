@@ -4,15 +4,14 @@ from __future__ import annotations
 
 import time
 
+from agent_team.config.settings import AgentTeamSettings
 from agent_team.engine.base import BaseLLMClient
-from agent_team.engine.client_factory import create_client
-from agent_team.engine.prompt_builder import build_system_prompt, build_synthesis_prompt, build_user_message
+from agent_team.engine.prompt_builder import build_synthesis_prompt, build_system_prompt, build_user_message
 from agent_team.engine.tool_executor import ToolExecutor
 from agent_team.exceptions import WorkflowError
 from agent_team.output.base import OutputRenderer
 from agent_team.roles.models import DEFAULT_ROLE_ORDER, Role
 from agent_team.roles.registry import RoleRegistry
-from agent_team.config.settings import AgentTeamSettings
 from agent_team.workflows.base import WorkflowContext, WorkflowResult
 
 
@@ -160,7 +159,7 @@ class AnalysisWorkflow:
         """生成综合结论"""
         system_prompt = build_synthesis_prompt()
         user_parts = [f"## 需求\n{requirement}\n\n## 各角色分析"]
-        for role_id, output in all_outputs.items():
+        for _role_id, output in all_outputs.items():
             user_parts.append(output)
             user_parts.append("")
         user_message = "\n".join(user_parts)

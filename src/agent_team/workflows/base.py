@@ -5,8 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from agent_team.roles.models import Role
-
 
 @dataclass
 class WorkflowContext:

@@ -9,7 +9,6 @@ from typing import Any
 
 from agent_team.exceptions import ToolExecutionError
 
-
 # 只读命令白名单（READ_BASH 权限）
 READ_ONLY_PREFIXES = frozenset(
     {
@@ -74,7 +73,10 @@ class ToolExecutor:
         if tool_name == "bash":
             return await self._execute_bash(tool_input.get("command", ""))
         elif tool_name == "read_file":
-            return self._execute_read(tool_input.get("path", ""), tool_input.get("offset", 0), tool_input.get("limit", 2000))
+            path_v = tool_input.get("path", "")
+            offset_v = tool_input.get("offset", 0)
+            limit_v = tool_input.get("limit", 2000)
+            return self._execute_read(path_v, offset_v, limit_v)
         elif tool_name == "write_file":
             return self._execute_write(tool_input.get("path", ""), tool_input.get("content", ""))
         else:
@@ -110,7 +112,7 @@ class ToolExecutor:
 
             return result
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return "[错误] 命令执行超时（60秒）"
         except Exception as e:
             return f"[错误] 命令执行失败: {e}"

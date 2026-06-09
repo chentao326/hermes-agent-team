@@ -12,12 +12,12 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
-from openai import OpenAI, AsyncOpenAI
+from openai import AsyncOpenAI, OpenAI
 
 from agent_team.engine.base import BaseLLMClient
-
 
 # OpenAI 格式的函数工具定义
 BASH_FUNCTION = {
@@ -303,7 +303,7 @@ class OpenAICompatClient(BaseLLMClient):
         ]
 
         # 每个 tool result 一条 message
-        for tc, result in zip(tool_calls, tool_results):
+        for tc, result in zip(tool_calls, tool_results, strict=False):
             messages.append({
                 "role": "tool",
                 "tool_call_id": tc["id"],

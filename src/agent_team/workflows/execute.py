@@ -8,14 +8,12 @@ from typing import Any
 
 from agent_team.config.settings import AgentTeamSettings
 from agent_team.engine.base import BaseLLMClient
-from agent_team.engine.prompt_builder import build_delegate_prompt, build_system_prompt, build_user_message
+from agent_team.engine.prompt_builder import build_delegate_prompt, build_system_prompt
 from agent_team.engine.tool_executor import ToolExecutor
-from agent_team.exceptions import WorkflowError
 from agent_team.output.base import OutputRenderer
 from agent_team.roles.models import Role
 from agent_team.roles.registry import RoleRegistry
 from agent_team.workflows.base import WorkflowContext, WorkflowResult
-
 
 # 执行模式阶段定义
 EXECUTE_PHASES: list[dict[str, Any]] = [
@@ -213,7 +211,7 @@ class ExecuteWorkflow:
 
     def _build_task_description(self, role: Role, requirement: str, phase: dict[str, Any]) -> str:
         task_templates = {
-            "pm": f"分析以下需求，输出完整的 PRD（概述→用户故事→MoSCoW 优先级→验收标准→数据指标→风险→迭代计划）：\n\n{requirement}",
+            "pm": f"分析以下需求，输出完整的 PRD（概述→用户故事→MoSCoW 优先级→验收标准→数据指标）：\n\n{requirement}",
             "pjm": "基于产品经理的需求确认，制定项目排期和风险矩阵",
             "architect": "基于产品经理的需求，设计技术架构方案（架构图、模块划分、接口定义、技术选型 trade-off）",
             "ux-designer": "基于产品经理的需求，设计交互方案（信息架构、关键路径、线框描述）",

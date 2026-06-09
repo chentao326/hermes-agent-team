@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import asyncio
-import concurrent.futures
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import anthropic
 
 from agent_team.engine.base import BaseLLMClient
-
 
 # Anthropic 格式的工具定义
 BASH_TOOL = {
@@ -200,7 +198,7 @@ class AnthropicClient(BaseLLMClient):
             })
 
         tool_result_content = []
-        for tc, result in zip(tool_calls, tool_results):
+        for tc, result in zip(tool_calls, tool_results, strict=False):
             tool_result_content.append({
                 "type": "tool_result",
                 "tool_use_id": tc["id"],

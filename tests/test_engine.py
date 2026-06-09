@@ -1,6 +1,5 @@
 """引擎模块测试"""
 
-import pytest
 
 from agent_team.engine.prompt_builder import (
     build_delegate_prompt,
@@ -9,7 +8,6 @@ from agent_team.engine.prompt_builder import (
     build_user_message,
 )
 from agent_team.engine.tool_executor import is_read_only_command
-from agent_team.roles.models import PermissionLevel, Role
 from agent_team.roles.registry import RoleRegistry
 
 

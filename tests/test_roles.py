@@ -5,8 +5,6 @@ import pytest
 from agent_team.roles.models import (
     DEFAULT_ROLE_ORDER,
     PERMISSION_TOOLS,
-    ROLE_NAMES,
-    ROLE_PERMISSIONS,
     PermissionLevel,
     Role,
 )

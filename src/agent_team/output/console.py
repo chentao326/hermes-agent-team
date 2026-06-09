@@ -6,7 +6,6 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
-from rich.spinner import Spinner
 from rich.text import Text
 
 from agent_team.output.base import OutputRenderer

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 
 class BaseLLMClient(ABC):
@@ -80,7 +81,7 @@ class BaseLLMClient(ABC):
 
         # tool results
         tool_result_content = []
-        for tc, result in zip(tool_calls, tool_results):
+        for tc, result in zip(tool_calls, tool_results, strict=False):
             tool_result_content.append({
                 "type": "tool_result",
                 "tool_use_id": tc["id"],

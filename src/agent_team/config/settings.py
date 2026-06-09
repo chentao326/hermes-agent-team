@@ -9,7 +9,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import yaml
 from pydantic import Field
@@ -51,10 +50,10 @@ class AgentTeamSettings(BaseSettings):
 
     # ── 输出配置 ──────────────────────────────────────────
     output_format: str = Field(default="console", description="输出格式: console/json/markdown")
-    output_file: Optional[str] = Field(default=None, description="输出文件路径")
+    output_file: str | None = Field(default=None, description="输出文件路径")
 
     # ── 路径 ──────────────────────────────────────────────
-    custom_roles_dir: Optional[Path] = Field(default=None, description="自定义角色目录")
+    custom_roles_dir: Path | None = Field(default=None, description="自定义角色目录")
 
     def effective_api_key(self) -> str:
         """获取有效的 API Key

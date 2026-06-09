@@ -143,10 +143,8 @@ def ask(
     no_stream: bool = typer.Option(False, "--no-stream", help="禁用流式输出"),
 ) -> None:
     """向指定角色提问"""
-    from agent_team.engine.base import BaseLLMClient
-    from agent_team.engine.tool_executor import ToolExecutor
-    from agent_team.roles.registry import RoleRegistry
     from agent_team.output.console import ConsoleRenderer
+    from agent_team.roles.registry import RoleRegistry
 
     settings = _get_settings(api_key=api_key, model=model, provider=provider, base_url=base_url)
 
@@ -154,19 +152,21 @@ def ask(
     if not effective_key:
         console.print("[bold red]错误:[/bold red] 未设置 API Key。请设置环境变量或运行 agent-team config init")
         console.print("  环境变量: [dim]ANTHROPIC_API_KEY[/dim] 或 [dim]OPENAI_API_KEY[/dim]")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
     registry = RoleRegistry()
     try:
         role = registry.get(role_id)
     except Exception as e:
         console.print(f"[bold red]错误:[/bold red] {e}")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
     renderer = ConsoleRenderer()
     client = _create_client(settings)
 
-    console.print(f"\n  [bold]{role.name}[/bold] 正在分析... (provider: {settings.provider or 'auto'}, model: {client.model_name})\n")
+    provider_label = settings.provider or "auto"
+    client_model = client.model_name
+    console.print(f"\n  [bold]{role.name}[/bold] 正在分析... (provider: {provider_label}, model: {client_model})\n")
     console.print("  " + "─" * 50, style="dim")
 
     try:
@@ -187,7 +187,7 @@ def ask(
 
     except Exception as e:
         console.print(f"\n  [bold red]✗ 错误:[/bold red] {e}")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
 
 # ─── run 子命令 ───────────────────────────────────────────
@@ -237,9 +237,9 @@ def run(
     tool_executor = ToolExecutor()
 
     # 确定 provider 字符串（用于选择工具格式）
-    from agent_team.engine.client_factory import create_client, PROVIDER_PRESETS
 
-    is_anthropic = isinstance(client, __import__("agent_team.engine.anthropic_client", fromlist=["AnthropicClient"]).AnthropicClient)
+    from agent_team.engine.anthropic_client import AnthropicClient
+    is_anthropic = isinstance(client, AnthropicClient)
     provider_str = "anthropic" if is_anthropic else "openai"
 
     if mode == "execute":
@@ -252,7 +252,7 @@ def run(
         result = workflow.run(requirement=requirement, role_filter=role_filter)
     except Exception as e:
         console.print(f"\n  [bold red]✗ 工作流错误:[/bold red] {e}")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
     # 额外输出格式
     if settings.output_format == "json":
@@ -265,7 +265,8 @@ def run(
             "elapsed_seconds": result.elapsed_seconds,
         }
         if output_file:
-            pathlib.Path(output_file).write_text(json.dumps(output_data, ensure_ascii=False, indent=2), encoding="utf-8")
+            out_path = pathlib.Path(output_file)
+            out_path.write_text(json.dumps(output_data, ensure_ascii=False, indent=2), encoding="utf-8")
             console.print(f"\n  [green]✓[/green] JSON 已写入: {output_file}")
         else:
             console.print(json.dumps(output_data, ensure_ascii=False, indent=2))

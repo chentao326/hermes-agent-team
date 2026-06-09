@@ -12,7 +12,6 @@ from agent_team.roles.models import (
     ROLE_FILE_MAP,
     ROLE_NAMES,
     ROLE_PERMISSIONS,
-    PermissionLevel,
     Role,
 )
 

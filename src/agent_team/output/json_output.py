@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+
 from agent_team.output.base import OutputRenderer
 from agent_team.roles.models import Role
 
